@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <launch> 
+
+    <!-- /square/circle_2d/circle_3d/grasp-->
+    <arg name = "task" default = "square"></arg>
     <!-- reference node -->
-    <node name="ref_node" pkg="reference" type="ref_node.py" output="screen"></node>
+    <node name="ref_node" pkg="reference" type="ref_node.py" output="screen">
+        <param name="task" value="$(arg task)" />
+    </node>
 </launch>
