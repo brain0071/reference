@@ -17,9 +17,12 @@ class Test_Ref_Wrapper():
         self.rate = 10
         self.reference_rate = rospy.Rate(10)
         
-                
         task = rospy.get_param("~task")
         self.task = task
+        
+        self.ref_x = 3
+        self.ref_y = 2
+        self.ref_z = 1
 
         while True:
             self.run_reference()
@@ -43,164 +46,82 @@ class Test_Ref_Wrapper():
         
         self.time = self.time + (1 / self.rate)
         
-        if self.task == "square": 
-            delta_time = 60
-            # real
-            # length = 0.5
-            # sim 
-            length = 0.1
-            if self.time < 1 * delta_time:
-                
-                ref_x = 0
-                ref_y = 0
-                ref_yaw = 0
+        if self.task == "point": 
+            
+            ref_roll = 0
+            ref_pitch = 0
+            ref_yaw = 0
+                    
 
-            elif self.time > 1 * delta_time and self.time < 2 * delta_time:
-                
-                # ref_x = -length
-                # ref_y = 0
-                
+        elif self.task == "roll":
+            
+            ref_roll = 45
+            ref_pitch = 0
+            ref_yaw = 0       
                  
-                ref_x = 0.2
-                ref_y = -0.2
-                
-                # test
-                ref_yaw = 90
+        elif self.task == "roll_sin":
             
-            elif self.time > 2 * delta_time and self.time < 3 * delta_time:
-                
-                # ref_x = 0
-                # ref_y = 0
-
-                ref_x = length
-                ref_y = length
-                ref_yaw = -180
-
-                # ref_x = length 
-                # ref_y = 0
-                # ref_yaw = -45
+            # T = 10s
+            deg = 2 * math.pi / 10 * self.time
             
-            elif self.time > 3 * delta_time and self.time <  4 * delta_time:
-            
-                ref_x = -length
-                ref_y = length
-
-                # ref_x = length
-                # ref_y = -length
-
-                ref_yaw = -90
-
-            elif self.time > 4 * delta_time:
-                
-                ref_x = -length
-                ref_y = -length
-                
-                # ref_x = 0
-                # ref_y = 0
-                
-                ref_yaw = -90
-    
-            else:
-                rospy.logerr("Time Error")
-        
-            ref_roll = 0
+            roll = 45
+            ref_roll = roll * math.sin(deg)
             ref_pitch = 0
-            
-            # real
-            ref_z = 0.6
-            # sim
-            # ref_z = 0       
-            ref_att= self.euler_to_quaternion(math.radians(ref_roll),  math.radians(ref_pitch), 
-                                                math.radians(ref_yaw))
-            
-            rospy.loginfo("ref: %f, ref_y: %f, ref_z: %f", ref_x, ref_y, ref_z)
-            rospy.loginfo("qw: %f, qx: %f, qy: %f, qz: %f", ref_att[0], ref_att[1], ref_att[2], ref_att[3])
-            ref = PoseStamped()            
-            ref.pose.position.x = ref_x
-            ref.pose.position.y = ref_y
-            ref.pose.position.z = ref_z
-            ref.pose.orientation.w = ref_att[0]
-            ref.pose.orientation.x = ref_att[1]
-            ref.pose.orientation.y = ref_att[2]
-            ref.pose.orientation.z = ref_att[3]
-            
-            self.reference_pub.publish(ref)
-
-        elif self.task == "circle_2d":
-            
-            deg = 2 * math.pi / 60 * self.time
-            
-            radius = 0.1
-
-            ref_x = radius * math.cos(deg)
-            ref_y = radius * math.sin(deg)
-            
-            # ref_z = 0
-            
-            # real
-            ref_z = 0.6
-            
-            ref_roll = 0
-            ref_pitch = 0
-            
-            # ref_yaw = deg
             ref_yaw = 0
             
-            ref_att= self.euler_to_quaternion(ref_roll, ref_pitch, ref_yaw)
-            rospy.loginfo("ref: %f, ref_y: %f, ref_z: %f", ref_x, ref_y, ref_z)
-            rospy.loginfo("qw: %f, qx: %f, qy: %f, qz: %f", ref_att[0], ref_att[1], ref_att[2], ref_att[3])
-            ref = PoseStamped()            
-            ref.pose.position.x = ref_x
-            ref.pose.position.y = ref_y
-            ref.pose.position.z = ref_z
-            ref.pose.orientation.w = ref_att[0]
-            ref.pose.orientation.x = ref_att[1]
-            ref.pose.orientation.y = ref_att[2]
-            ref.pose.orientation.z = ref_att[3]
-            self.reference_pub.publish(ref)
-
-        elif self.task == "circle_3d":
-
-            deg = 2 * math.pi / 60 * self.time
-            print(self.time)
-            print(deg)
-            radius = 2
-            high = 0.6 
-
-            ref_x = radius * math.cos(deg)
-            ref_y = radius * math.sin(deg)
-            ref_z = 0 - high / 60 * self.time
+        elif self.task == "pitch":
+            
+            ref_roll = 0
+            ref_pitch = 45
+            ref_yaw = 0    
+            
+        elif self.task == "pitch_sin":       
+            
+            # T = 10s
+            deg = 2 * math.pi / 10 * self.time
+            
+            pitch = 45
+            ref_pitch = pitch * math.sin(deg)
+            ref_roll = 0
+            ref_yaw = 0
+        
+        elif self.task == "yaw":
             
             ref_roll = 0
             ref_pitch = 0
-            ref_yaw = deg
-
-            ref_att= self.euler_to_quaternion(ref_roll, ref_pitch, ref_yaw)
+            ref_yaw = 45   
             
-            rospy.loginfo("ref: %f, ref_y: %f, ref_z: %f", ref_x, ref_y, ref_z)
-            rospy.loginfo("qw: %f, qx: %f, qy: %f, qz: %f", ref_att[0], ref_att[1], ref_att[2], ref_att[3])
+        elif self.task == "yaw_sin":       
             
-            ref = PoseStamped()            
-            ref.pose.position.x = ref_x
-            ref.pose.position.y = ref_y
-            ref.pose.position.z = ref_z
-            ref.pose.orientation.w = ref_att[0]
-            ref.pose.orientation.x = ref_att[1]
-            ref.pose.orientation.y = ref_att[2]
-            ref.pose.orientation.z = ref_att[3]
-            self.reference_pub.publish(ref)
-        
-        elif self.task == "grasp":
-            pass
+            # T = 10s
+            deg = 2 * math.pi / 10 * self.time
+            yaw = 45
+            ref_yaw = yaw * math.sin(deg)
+            ref_roll = 0
+            ref_pitch = 0
         
         else:
             rospy.logerr("Task Error")
+        
+        ref_att= self.euler_to_quaternion(math.radians(ref_roll),  math.radians(ref_pitch), 
+                                                math.radians(ref_yaw))
+        
+        rospy.loginfo("ref: %f, ref_y: %f, ref_z: %f", self.ref_x, self.ref_y, self.ref_z)
+        rospy.loginfo("qw: %f, qx: %f, qy: %f, qz: %f", ref_att[0], ref_att[1], ref_att[2], ref_att[3])
+        ref = PoseStamped()            
+        ref.pose.position.x = self.ref_x
+        ref.pose.position.y = self.ref_y
+        ref.pose.position.z = self.ref_z
+        ref.pose.orientation.w = ref_att[0]
+        ref.pose.orientation.x = ref_att[1]
+        ref.pose.orientation.y = ref_att[2]
+        ref.pose.orientation.z = ref_att[3]
+        self.reference_pub.publish(ref)
+
 
 def main():
 
     rospy.init_node("reference_test_node")
-    
-
     Test_Ref_Wrapper()
 
 if __name__ == '__main__':

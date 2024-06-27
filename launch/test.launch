@@ -2,7 +2,7 @@
 
 <launch> 
 
-    <!-- /square/circle_2d/circle_3d/grasp-->
+    <!-- point / roll / roll_sin / pitch / pitch_sin / yaw / yaw_sin -->
     <arg name = "task" default = "square"></arg>
     <!-- reference node -->
     <node name="ref_node" pkg="reference" type="ref_node.py" output="screen">
