@@ -22,7 +22,7 @@ class Test_Ref_Wrapper():
         
         self.ref_x = 3
         self.ref_y = 2
-        self.ref_z = 1
+        self.ref_z = 0.3
 
         while True:
             self.run_reference()
