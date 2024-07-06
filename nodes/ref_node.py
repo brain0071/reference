@@ -80,8 +80,8 @@ class Test_Ref_Wrapper():
             ref.pose.pose.orientation.y = ref_att[2]
             ref.pose.pose.orientation.z = ref_att[3]
             ref.twist.twist.linear.x = vel_x
-            ref.twist.twist.linear.x = vel_y
-            ref.twist.twist.linear.x = vel_z
+            ref.twist.twist.linear.y = vel_y
+            ref.twist.twist.linear.z = vel_z
             ref.twist.twist.angular.x = rate[0]
             ref.twist.twist.angular.y = rate[1]
             ref.twist.twist.angular.z = rate[2]
