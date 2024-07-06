@@ -64,23 +64,27 @@ class Test_Ref_Wrapper():
 
             ref_att= self.euler_to_quaternion(ref_roll, ref_pitch, ref_yaw)
             
-            rospy.loginfo("ref: %f, ref_y: %f, ref_z: %f", ref_x, ref_y, ref_z)
-            rospy.loginfo("qw: %f, qx: %f, qy: %f, qz: %f", ref_att[0], ref_att[1], ref_att[2], ref_att[3])
+            rate = [0, 0, 0]
             
-            ref = Odometry()            
-            ref.pose.position.x = ref_x
-            ref.pose.position.y = ref_y
-            ref.pose.position.z = ref_z
-            ref.pose.orientation.w = ref_att[0]
-            ref.pose.orientation.x = ref_att[1]
-            ref.pose.orientation.y = ref_att[2]
-            ref.pose.orientation.z = ref_att[3]
+            rospy.loginfo("ref_x: %f, ref_y: %f, ref_z: %f", ref_x, ref_y, ref_z)
+            rospy.loginfo("vel_x: %f, vel_y: %f, vel_z: %f", vel_x, vel_y, vel_z)
+            rospy.loginfo("qw: %f, qx: %f, qy: %f, qz: %f", ref_att[0], ref_att[1], ref_att[2], ref_att[3])
+            rospy.loginfo("rate_x: %f, rate_y: %f, rate_z: %f", rate[0], rate[1], rate[2])
+            
+            ref = Odometry()          
+            ref.pose.pose.position.x  = ref_x
+            ref.pose.pose.position.y = ref_y
+            ref.pose.pose.position.z = ref_z
+            ref.pose.pose.orientation.w = ref_att[0]
+            ref.pose.pose.orientation.x = ref_att[1]
+            ref.pose.pose.orientation.y = ref_att[2]
+            ref.pose.pose.orientation.z = ref_att[3]
             ref.twist.twist.linear.x = vel_x
             ref.twist.twist.linear.x = vel_y
             ref.twist.twist.linear.x = vel_z
-            ref.twist.twist.angular.x = 0
-            ref.twist.twist.angular.y = 0
-            ref.twist.twist.angular.z = 0
+            ref.twist.twist.angular.x = rate[0]
+            ref.twist.twist.angular.y = rate[1]
+            ref.twist.twist.angular.z = rate[2]
             self.reference_pub.publish(ref)
     
         else:
