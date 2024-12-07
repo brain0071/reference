@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <launch> 
-
-    <arg name = "task" default = "circle_3d"></arg>
+    <!-- att_tracking/att_hold -->
+    <arg name = "task" default = "att_tracking"></arg>
     <!-- reference node -->
     <node name="ref_node" pkg="reference" type="ref_node.py" output="screen">
         <param name="task" value="$(arg task)" />

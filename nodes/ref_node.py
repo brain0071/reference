@@ -6,18 +6,20 @@ import numpy as np
 from nav_msgs.msg import Odometry
 import math
 import time
+from std_srvs.srv import SetBool
 
 class Test_Ref_Wrapper():
     def __init__(self):
 
         # send real_wp to simulator
-        self.reference_pub = rospy.Publisher("test_reference", 
-                                           Odometry, queue_size= 1)
-
+        self.reference_pub = rospy.Publisher("/test_reference", 
+                                           Odometry, queue_size= 10)
+        # Emergency stop
+        
         self.time = 0
         self.rate = 50
         self.reference_rate = rospy.Rate(self.rate)
-        self.radius = 2
+        self.radius = 3
                 
         task = rospy.get_param("~task")
         self.task = task
@@ -26,7 +28,10 @@ class Test_Ref_Wrapper():
         while True:
             self.run_reference()
             self.reference_rate.sleep()
-
+    
+    def controller_state_callback(self):
+        pass
+    
     def euler_to_quaternion(self, roll, pitch, yaw):
         qx = np.sin(roll / 2) * np.cos(pitch / 2) * np.cos(yaw / 2) - np.cos(roll / 2) * np.sin(pitch / 2) * np.sin(yaw / 2)
         qy = np.cos(roll / 2) * np.sin(pitch / 2) * np.cos(yaw / 2) + np.sin(roll / 2) * np.cos(pitch / 2) * np.sin(yaw / 2)
@@ -42,19 +47,18 @@ class Test_Ref_Wrapper():
         if self.task == "circle_3d":
 
             deg = 2 * math.pi / 60 * self.time
-            print(self.time)
-            print(deg)
-            
-            high = 2 
+            high = 3
             
             # [self.radius 0 0]
             ref_x = self.radius * math.cos(deg)
             ref_y = self.radius * math.sin(deg)
             ref_z = 0 - high / 60 * self.time
+            if ref_z < (-3):
+                ref_z = -3 
             
-            vel_x = ref_x - self.last_pos[0] / (1 / self.rate)
-            vel_y = ref_y - self.last_pos[1] / (1 / self.rate)
-            vel_z = ref_z - self.last_pos[2] / (1 / self.rate)
+            vel_x = (ref_x - self.last_pos[0]) / (1 / self.rate)
+            vel_y = (ref_y - self.last_pos[1]) / (1 / self.rate)
+            vel_z = (ref_z - self.last_pos[2]) / (1 / self.rate)
             
             self.last_pos = [ref_x, ref_y, ref_z]            
             
@@ -65,12 +69,7 @@ class Test_Ref_Wrapper():
             ref_att= self.euler_to_quaternion(ref_roll, ref_pitch, ref_yaw)
             
             rate = [0, 0, 0]
-            
-            rospy.loginfo("ref_x: %f, ref_y: %f, ref_z: %f", ref_x, ref_y, ref_z)
-            rospy.loginfo("vel_x: %f, vel_y: %f, vel_z: %f", vel_x, vel_y, vel_z)
-            rospy.loginfo("qw: %f, qx: %f, qy: %f, qz: %f", ref_att[0], ref_att[1], ref_att[2], ref_att[3])
-            rospy.loginfo("rate_x: %f, rate_y: %f, rate_z: %f", rate[0], rate[1], rate[2])
-            
+             
             ref = Odometry()          
             ref.pose.pose.position.x  = ref_x
             ref.pose.pose.position.y = ref_y
@@ -85,6 +84,43 @@ class Test_Ref_Wrapper():
             ref.twist.twist.angular.x = rate[0]
             ref.twist.twist.angular.y = rate[1]
             ref.twist.twist.angular.z = rate[2]
+            self.reference_pub.publish(ref)
+            
+        elif self.task == "att_tracking":
+            
+            deg = 2 * math.pi / 15 * self.time
+            max_deg = 0.5 * math.pi
+            ref_roll = max_deg * math.sin(deg)
+            ref_pitch = 0
+            ref_yaw = max_deg * math.cos(deg)
+            # ref_yaw = 0
+            ref_att= self.euler_to_quaternion(ref_roll, ref_pitch, ref_yaw)
+            
+            pos = [0, 0, 0]
+            vel = [0, 0, 0]
+            rate = [0, 0, 0]
+  
+            ref = Odometry()          
+            ref.pose.pose.position.x, ref.pose.pose.position.y, ref.pose.pose.position.z = pos
+            ref.pose.pose.orientation.w, ref.pose.pose.orientation.x, ref.pose.pose.orientation.y, ref.pose.pose.orientation.z = ref_att
+            ref.twist.twist.linear.x, ref.twist.twist.linear.y, ref.twist.twist.linear.z = vel
+            ref.twist.twist.angular.x, ref.twist.twist.angular.y, ref.twist.twist.angular.z = rate
+            self.reference_pub.publish(ref)
+            
+        elif self.task == "att_hold":
+        
+            ref_roll = 0.5 * math.pi
+            ref_pitch = 0
+            ref_yaw = 0
+            ref_att= self.euler_to_quaternion(ref_roll, ref_pitch, ref_yaw)
+            pos = [0, 0, 0]
+            vel = [0, 0, 0]
+            rate = [0, 0, 0]
+            ref = Odometry()          
+            ref.pose.pose.position.x, ref.pose.pose.position.y, ref.pose.pose.position.z = pos
+            ref.pose.pose.orientation.w, ref.pose.pose.orientation.x, ref.pose.pose.orientation.y, ref.pose.pose.orientation.z = ref_att
+            ref.twist.twist.linear.x, ref.twist.twist.linear.y, ref.twist.twist.linear.z = vel
+            ref.twist.twist.angular.x, ref.twist.twist.angular.y, ref.twist.twist.angular.z = rate
             self.reference_pub.publish(ref)
     
         else:
