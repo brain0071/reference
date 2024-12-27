@@ -88,12 +88,13 @@ class Test_Ref_Wrapper():
             
         elif self.task == "att_tracking":
             
-            deg = 2 * math.pi / 15 * self.time
-            max_deg = 0.5 * math.pi
-            ref_roll = max_deg * math.sin(deg)
+            deg = 2 * math.pi / 30 * self.time
+            max_deg = (1 / 3) * math.pi
+            #ref_roll = max_deg * math.sin(deg)
+            ref_roll = 0
             ref_pitch = 0
             ref_yaw = max_deg * math.cos(deg)
-            # ref_yaw = 0
+            #ref_yaw = 0
             ref_att= self.euler_to_quaternion(ref_roll, ref_pitch, ref_yaw)
             
             pos = [0, 0, 0]
@@ -109,9 +110,11 @@ class Test_Ref_Wrapper():
             
         elif self.task == "att_hold":
         
-            ref_roll = 0.5 * math.pi
+            ref_roll = (1 / 3) * math.pi
+            #ref_roll = 0
             ref_pitch = 0
             ref_yaw = 0
+            #ref_yaw = (1 / 4) * math.pi
             ref_att= self.euler_to_quaternion(ref_roll, ref_pitch, ref_yaw)
             pos = [0, 0, 0]
             vel = [0, 0, 0]
