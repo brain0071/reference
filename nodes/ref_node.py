@@ -82,7 +82,9 @@ class Test_Ref_Wrapper():
             """
             
             # ref_roll = 0
-            ref_roll = (1 / 3) * math.pi
+            # ref_roll = (1 / 3) * math.pi
+            # test in haichuang
+            ref_roll = (1 / 6) * math.pi
             
             ref_pitch = 0
             
