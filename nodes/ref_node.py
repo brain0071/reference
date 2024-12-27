@@ -43,58 +43,25 @@ class Test_Ref_Wrapper():
     def run_reference(self):
         
         self.time = self.time + (1 / self.rate)
-        
-        if self.task == "circle_3d":
-
-            deg = 2 * math.pi / 60 * self.time
-            high = 3
             
-            # [self.radius 0 0]
-            ref_x = self.radius * math.cos(deg)
-            ref_y = self.radius * math.sin(deg)
-            ref_z = 0 - high / 60 * self.time
-            if ref_z < (-3):
-                ref_z = -3 
+        if self.task == "att_tracking":
             
-            vel_x = (ref_x - self.last_pos[0]) / (1 / self.rate)
-            vel_y = (ref_y - self.last_pos[1]) / (1 / self.rate)
-            vel_z = (ref_z - self.last_pos[2]) / (1 / self.rate)
             
-            self.last_pos = [ref_x, ref_y, ref_z]            
-            
-            ref_roll = 0
-            ref_pitch = 0
-            ref_yaw = 0
-
-            ref_att= self.euler_to_quaternion(ref_roll, ref_pitch, ref_yaw)
-            
-            rate = [0, 0, 0]
-             
-            ref = Odometry()          
-            ref.pose.pose.position.x  = ref_x
-            ref.pose.pose.position.y = ref_y
-            ref.pose.pose.position.z = ref_z
-            ref.pose.pose.orientation.w = ref_att[0]
-            ref.pose.pose.orientation.x = ref_att[1]
-            ref.pose.pose.orientation.y = ref_att[2]
-            ref.pose.pose.orientation.z = ref_att[3]
-            ref.twist.twist.linear.x = vel_x
-            ref.twist.twist.linear.y = vel_y
-            ref.twist.twist.linear.z = vel_z
-            ref.twist.twist.angular.x = rate[0]
-            ref.twist.twist.angular.y = rate[1]
-            ref.twist.twist.angular.z = rate[2]
-            self.reference_pub.publish(ref)
-            
-        elif self.task == "att_tracking":
+            """
+            test roll and yaw 60 * cos degree
+            """
             
             deg = 2 * math.pi / 30 * self.time
             max_deg = (1 / 3) * math.pi
-            #ref_roll = max_deg * math.sin(deg)
+            
             ref_roll = 0
+            # ref_roll = max_deg * math.cos(deg)
+            
             ref_pitch = 0
+            
             ref_yaw = max_deg * math.cos(deg)
             #ref_yaw = 0
+            
             ref_att= self.euler_to_quaternion(ref_roll, ref_pitch, ref_yaw)
             
             pos = [0, 0, 0]
@@ -109,12 +76,20 @@ class Test_Ref_Wrapper():
             self.reference_pub.publish(ref)
             
         elif self.task == "att_hold":
-        
+            
+            """
+            test roll and yaw 60 degree
+            """
+            
+            # ref_roll = 0
             ref_roll = (1 / 3) * math.pi
-            #ref_roll = 0
+            
             ref_pitch = 0
+            
             ref_yaw = 0
-            #ref_yaw = (1 / 4) * math.pi
+            # ref_yaw = (1 / 3) * math.pi
+            
+            
             ref_att= self.euler_to_quaternion(ref_roll, ref_pitch, ref_yaw)
             pos = [0, 0, 0]
             vel = [0, 0, 0]
