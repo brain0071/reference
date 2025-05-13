@@ -12,7 +12,8 @@ class Ref_Wrapper():
         # send real_wp to simulator
         self.reference_pub = rospy.Publisher("test_reference", Odometry, queue_size= 1)
         self.time = 0
-        self.reference_rate = rospy.Rate(50)
+        self.rate = 50
+        self.reference_rate = rospy.Rate(self.rate)
         task = rospy.get_param("~task")
         self.task = task
 
@@ -35,8 +36,11 @@ class Ref_Wrapper():
         if self.task == "circle_3d":
             
             deg = 2 * math.pi / 10 * self.time
-            radius = 2    
+            radius = 0.5
+            
+            ref = Odometry()
             ref.pose.pose.position.x, ref.pose.pose.position.y, ref.pose.pose.position.z = [radius * math.cos(deg), radius * math.sin(deg), 0]
+            # ref.pose.pose.position.x, ref.pose.pose.position.y, ref.pose.pose.position.z = [0.5, 0.5, 0]
             ref.pose.pose.orientation.w, ref.pose.pose.orientation.x, ref.pose.pose.orientation.y, ref.pose.pose.orientation.z = self.euler_to_quaternion(0, 0, 0)
             ref.twist.twist.linear.x, ref.twist.twist.linear.y, ref.twist.twist.linear.z = [0.0, 0.0, 0.0]
             ref.twist.twist.angular.x, ref.twist.twist.angular.y, ref.twist.twist.angular.z = [0.0, 0.0, 0.0]
