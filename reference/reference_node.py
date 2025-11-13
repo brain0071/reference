@@ -26,10 +26,10 @@ class Reference(Node):
             
         roll = 0.0
         pitch = 0.0
-        yaw = max_deg * math.cos(deg)
+        yaw = 0.0
         att = self.euler_to_quaternion(roll, pitch, yaw)
             
-        x, y, z = 2 * math.cos(deg), 2 * math.sin(deg), 0.0
+        x, y, z = 0.0, 0.0, 0.0
         pos = [x, y, z]
         vel = [(x - self.last_pos[0]) / self.dt , (y - self.last_pos[1]) / self.dt, (z - self.last_pos[2]) / self.dt]
         rate = [0.0, 0.0, 0.0]
