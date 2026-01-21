@@ -21,15 +21,13 @@ class Reference(Node):
     def run_reference(self):
         
         self.time = self.time + (1 / self.rate)
-        deg = 2 * math.pi / 30 * self.time
-        max_deg = (1 / 3) * math.pi
-            
+        deg = 2 * math.pi / 60 * self.time
         roll = 0.0
         pitch = 0.0
         yaw = 0.0
         att = self.euler_to_quaternion(roll, pitch, yaw)
             
-        x, y, z = 0.0, 0.0, 0.0
+        x, y, z = 1.0 * math.cos(deg), 1.0 * math.sin(deg), 0.2
         pos = [x, y, z]
         vel = [(x - self.last_pos[0]) / self.dt , (y - self.last_pos[1]) / self.dt, (z - self.last_pos[2]) / self.dt]
         rate = [0.0, 0.0, 0.0]
