@@ -24,13 +24,13 @@ class Reference(Node):
         deg = 2 * math.pi / 60 * self.time
         # roll = (1/3) * math.pi * math.cos(deg)
         # pitch = (1/3) * math.pi * math.sin(deg)
-        roll = (1/3) * math.pi 
-        pitch = (1/3) * math.pi
+        roll = 0.0 
+        pitch = 0.0
         yaw = 0.0
         att = self.euler_to_quaternion(roll, pitch, yaw)
             
-        x, y, z = 10.0 * math.cos(deg), 10.0 * math.sin(deg), - 0.2 * self.time
-        # x, y, z = -0.3, 0.3, 0.3
+        # x, y, z = 10.0 * math.cos(deg), 10.0 * math.sin(deg), - 0.2 * self.time
+        x, y, z = 0.0, 0.0, 0.0
         pos = [x, y, z]
         #vel = [(x - self.last_pos[0]) / self.dt , (y - self.last_pos[1]) / self.dt, (z - self.last_pos[2]) / self.dt]
         vel = [0.0, 0.0, 0.0]
