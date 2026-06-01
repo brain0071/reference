@@ -23,9 +23,9 @@ class Reference(Node):
         self.time = self.time + (1 / self.rate)
         deg = 2 * math.pi / 60 * self.time
         # roll = (1/3) * math.pi * math.cos(deg)
-        # pitch = (1/3) * math.pi * math.sin(deg)
+        pitch = -(1/2) * math.pi
         roll = 0.0 
-        pitch = 0.0
+        #pitch = 0.0
         yaw = 0.0
         att = self.euler_to_quaternion(roll, pitch, yaw)
             
